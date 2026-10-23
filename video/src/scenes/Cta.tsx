@@ -1,6 +1,7 @@
 import { AbsoluteFill, OffthreadVideo, staticFile } from "remotion";
 import { ASSETS } from "../assets";
 import { REPO_URL } from "../data";
+import { GITHUB_URL } from "../handle";
 import { ACCENT, BG, INK_2 } from "../theme";
 import { Page, Rise } from "../ui";
 
@@ -20,6 +21,7 @@ export const Cta: React.FC = () => (
       <Rise delay={20}>
         <div style={{ fontSize: 38, color: INK_2, marginTop: 50 }}>Full study, code and data:</div>
         <div style={{ fontSize: 33, fontWeight: 700, color: ACCENT, marginTop: 10, whiteSpace: "nowrap" }}>{REPO_URL}</div>
+        <div style={{ fontSize: 34, color: "#fff", marginTop: 34, fontWeight: 600 }}>Follow my work: {GITHUB_URL}</div>
       </Rise>
       <div style={{ height: 80 }} />
     </Page>

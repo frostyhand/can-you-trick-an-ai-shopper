@@ -1,6 +1,7 @@
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { totalDecisions, totalShelves, MODELS } from "./data";
 import { phase2Decisions } from "./phase2";
+import { GITHUB_URL } from "./handle";
 import { ACCENT, FONT, MUTED } from "./theme";
 
 /** Two slow-drifting glows behind the content scenes. */
@@ -42,8 +43,8 @@ export const Footer: React.FC<{ hideBefore: number; hideAfter: number }> = ({ hi
   });
   return (
     <AbsoluteFill style={{ pointerEvents: "none", fontFamily: FONT }}>
-      <div style={{ position: "absolute", bottom: 36, left: 90, fontSize: 24, color: MUTED, opacity: o, letterSpacing: 0.5 }}>
-        CAN YOU TRICK AN AI SHOPPER? · {totalShelves.toLocaleString("en-US")} shelves · {MODELS.length} models · {(totalDecisions + phase2Decisions).toLocaleString("en-US")} decisions
+      <div style={{ position: "absolute", bottom: 34, left: 90, fontSize: 24, color: MUTED, opacity: o, letterSpacing: 0.5, whiteSpace: "nowrap" }}>
+        <span style={{ color: "#fff", fontWeight: 700 }}>{GITHUB_URL}</span> · {(totalDecisions + phase2Decisions).toLocaleString("en-US")} AI purchases tested
       </div>
     </AbsoluteFill>
   );

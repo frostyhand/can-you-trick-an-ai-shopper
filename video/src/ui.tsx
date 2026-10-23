@@ -6,7 +6,7 @@ export const Page: React.FC<{ children: React.ReactNode; padding?: number; trans
   padding = 90,
   transparent = false,
 }) => (
-  <AbsoluteFill style={{ backgroundColor: transparent ? "transparent" : "rgba(0,0,0,0)", fontFamily: FONT, color: INK, padding }}>
+  <AbsoluteFill style={{ backgroundColor: transparent ? "transparent" : "rgba(0,0,0,0)", fontFamily: FONT, color: INK, padding, paddingBottom: padding + 40 }}>
     {children}
   </AbsoluteFill>
 );

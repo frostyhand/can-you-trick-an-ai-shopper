@@ -30,10 +30,10 @@ export const Setup: React.FC<{ duration: number }> = ({ duration }) => {
     <Page>
       <div style={{ opacity: out, display: "flex", flexDirection: "column", height: "100%" }}>
         <Rise>
-          <div style={{ fontSize: 64, fontWeight: 800, lineHeight: 1.1 }}>Same shelf. One small change.</div>
+          <div style={{ fontSize: 64, fontWeight: 800, lineHeight: 1.1 }}>The test: same shelf, one small change.</div>
         </Rise>
         <Rise delay={8}>
-          <div style={{ fontSize: 40, color: INK_2, marginTop: 20 }}>Then we asked each AI to buy one product.</div>
+          <div style={{ fontSize: 38, color: INK_2, marginTop: 20, lineHeight: 1.35 }}>I added one sales trick to one product, then asked each AI to buy one product for a shopper.</div>
         </Rise>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 30, marginTop: 60, justifyContent: "center" }}>
           {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -43,7 +43,7 @@ export const Setup: React.FC<{ duration: number }> = ({ duration }) => {
           ))}
         </div>
         <Rise delay={70} style={{ marginTop: "auto" }}>
-          <div style={{ fontSize: 44, fontWeight: 600, color: ACCENT }}>Did the AI fall for it?</div>
+          <div style={{ fontSize: 44, fontWeight: 600, color: ACCENT }}>Did the trick change what the AI bought?</div>
         </Rise>
       </div>
     </Page>

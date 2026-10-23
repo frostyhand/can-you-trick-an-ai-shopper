@@ -8,26 +8,28 @@ import { Router } from "./scenes/Router";
 import { Setup } from "./scenes/Setup";
 import { ShieldIntro } from "./scenes/ShieldIntro";
 import { ShieldResult } from "./scenes/ShieldResult";
-import { Tricks } from "./scenes/Tricks";
+import { Takeaways } from "./scenes/Takeaways";
+import { TricksChart } from "./scenes/TricksChart";
 import { Wins } from "./scenes/Wins";
 import { BG } from "./theme";
 
 // 68 s at 30 fps, matching the 68-second edit of the music track. Scenes hold 6 to 10 s.
 const SCENES = [
-  { id: "hook", from: 0, duration: 165 },
-  { id: "setup", from: 165, duration: 180 },
-  { id: "tricks", from: 345, duration: 300 },
-  { id: "backfire", from: 645, duration: 225 },
-  { id: "wins", from: 870, duration: 210 },
-  { id: "shieldIntro", from: 1080, duration: 300 },
-  { id: "shieldResult", from: 1380, duration: 240 },
-  { id: "router", from: 1620, duration: 240 },
+  { id: "hook", from: 0, duration: 150 },
+  { id: "setup", from: 150, duration: 150 },
+  { id: "tricks", from: 300, duration: 270 },
+  { id: "backfire", from: 570, duration: 195 },
+  { id: "wins", from: 765, duration: 195 },
+  { id: "shieldIntro", from: 960, duration: 240 },
+  { id: "shieldResult", from: 1200, duration: 210 },
+  { id: "router", from: 1410, duration: 240 },
+  { id: "takeaways", from: 1650, duration: 210 },
   { id: "cta", from: 1860, duration: 180 },
 ] as const;
 export const TOTAL_FRAMES = 2040;
 
 // Frames (absolute) where a pop accents a number landing.
-const POPS = [645 + 110, 870 + 18, 870 + 53, 1380 + 80, 1620 + 70];
+const POPS = [300 + 60, 570 + 100, 765 + 30, 1200 + 40, 1410 + 40];
 
 const Sfx: React.FC<{ file: string | null; at: number; volume: number }> = ({ file, at, volume }) =>
   file ? (
@@ -39,7 +41,8 @@ const Sfx: React.FC<{ file: string | null; at: number; volume: number }> = ({ fi
 const SCENE_COMPONENTS: Record<string, React.FC<{ duration: number }>> = {
   hook: Hook,
   setup: Setup,
-  tricks: Tricks,
+  tricks: TricksChart,
+  takeaways: Takeaways,
   backfire: Hijack,
   wins: Wins,
   shieldIntro: ShieldIntro,

@@ -19,12 +19,12 @@ export const ShieldIntro: React.FC<{ duration: number }> = ({ duration }) => {
     <Page>
       <div style={{ opacity: out, display: "flex", flexDirection: "column", height: "100%" }}>
         <Rise>
-          <div style={{ fontSize: 62, fontWeight: 800, lineHeight: 1.1 }}>So we gave the small model a bodyguard.</div>
+          <div style={{ fontSize: 62, fontWeight: 800, lineHeight: 1.1 }}>So I put a filter in front of the small AI.</div>
         </Rise>
         <Rise delay={12}>
           <div style={{ fontSize: 34, color: INK_2, marginTop: 18, lineHeight: 1.35 }}>
-            Before the AI shops, <span style={{ color: "#fff", fontWeight: 700 }}>Jev</span> reads every line of every listing and labels it, in{" "}
-            {(overhead.shield_latency_ms_median / 1000).toFixed(1)} seconds per shelf.
+            <span style={{ color: "#fff", fontWeight: 700 }}>Jev</span> (by TypeSafe AI) reads every line of every product page in{" "}
+            {(overhead.shield_latency_ms_median / 1000).toFixed(1)} seconds and removes sales pressure and messages aimed at the AI.
           </div>
         </Rise>
         <div style={{ marginTop: 44 }}>
@@ -48,7 +48,7 @@ export const ShieldIntro: React.FC<{ duration: number }> = ({ duration }) => {
           })}
         </div>
         <Rise delay={200} style={{ marginTop: "auto" }}>
-          <div style={{ fontSize: 30, color: MUTED }}>Jev never picks the product. It only cleans what the shopping AI gets to read.</div>
+          <div style={{ fontSize: 30, color: MUTED }}>Prices, reviews and specs always stay. Jev never picks the product itself.</div>
         </Rise>
       </div>
     </Page>
