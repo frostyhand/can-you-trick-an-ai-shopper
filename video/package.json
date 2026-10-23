@@ -1,0 +1,22 @@
+{
+  "name": "can-you-trick-an-ai-shopper-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-data": "cp ../results/summary.json src/data/summary.json",
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts AIShopper out/ai-shopper.mp4 --codec h264 --crf 18",
+    "still": "remotion still src/index.ts Cover out/cover.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "@remotion/google-fonts": "4.0.534",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.534"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.9.3"
+  }
+}
