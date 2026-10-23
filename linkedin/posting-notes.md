@@ -2,7 +2,7 @@
 
 ## What to upload
 
-- **Video:** `video/out/ai-shopper.mp4` (1080 × 1350). Upload it natively to LinkedIn rather than linking to YouTube; native video gets far more reach.
+- **Video:** `video/out/ai-shopper.mp4` (1080 × 1350, 68 seconds). Upload it natively to LinkedIn rather than linking to YouTube; native video gets far more reach.
 - **Cover image:** `video/out/cover.png`. LinkedIn lets you set a custom thumbnail when you upload a video.
 - **Post text:** `linkedin/post.md`. Paste it as is.
 - **First comment:** `linkedin/first-comment.md`. Post it yourself straight after publishing. LinkedIn shows posts with outside links to fewer people, so the GitHub link goes in the comment, not the post.
@@ -14,7 +14,7 @@
 
 ## Optional choices (your call)
 
-- **Tagging:** tagging TypeSafe AI, Anthropic, OpenAI or Google DeepMind can widen reach, and it also invites their scrutiny. The study is factual and reproducible, so either choice is defensible.
+- **Tagging:** tagging TypeSafe AI (Jev), Anthropic, OpenAI or Google DeepMind can widen reach, and it also invites their scrutiny. The study is factual and reproducible, so either choice is defensible. TypeSafe comes out well in this framing, so tagging them is a natural fit.
 - **Disclosure:** the post already says the study is independent. If you have any commercial relationship with a provider, add one line saying so.
 - **Follow-ups:** a 5-slide carousel (one finding per slide) works well a few days later for people who missed the video.
 

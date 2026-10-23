@@ -27,7 +27,10 @@ from anthropic.types.messages.batch_create_params import Request
 from study.cli import add_filters
 from study.config import AGENT_INSTRUCTIONS, CLAUDE_EFFORT, CLAUDE_MAX_TOKENS, CLAUDE_MODELS, RAW
 from study.render import claude_user_message, content_hash, product_ids, request_key
-from study.store import append_jsonl, load_env, load_shelves, read_jsonl, select
+from pathlib import Path
+
+from study.config import SHELVES_FILE
+from study.store import append_jsonl, load_env, load_shelves, read_jsonl, reuse_index, reused, select
 
 BATCHES = RAW / "claude_batches.jsonl"
 
@@ -108,13 +111,29 @@ def record(alias: str, shelf: dict, sample: int, tag: str, mode: str, result: di
 
 
 def pending_jobs(shelves, aliases, samples, tag, mode):
-    jobs = []
+    """Jobs still to run. An earlier answer to byte-identical input (any run) is copied instead."""
+    jobs, copied, deferred, queued = [], 0, 0, set()
     for alias in aliases:
-        done = {r["key"] for r in read_jsonl(out_path(alias))}
+        existing = read_jsonl(out_path(alias))
+        done = {r["key"] for r in existing}
+        idx = reuse_index(existing)
         for shelf in shelves:
             for sample in range(samples):
-                if request_key(alias, shelf, sample, tag, mode) not in done:
+                key = request_key(alias, shelf, sample, tag, mode)
+                if key in done:
+                    continue
+                prior = idx.get((content_hash(shelf), sample, mode))
+                if prior is not None:
+                    append_jsonl(out_path(alias), reused(prior, key, tag, shelf["shelf_id"]))
+                    done.add(key)
+                    copied += 1
+                elif (alias, content_hash(shelf), sample) not in queued:
+                    queued.add((alias, content_hash(shelf), sample))
                     jobs.append((alias, shelf, sample))
+                else:
+                    deferred += 1  # same input already queued: copied on the next run
+    if copied or deferred:
+        print(f"reused {copied} earlier answers to identical shelves; {deferred} duplicates wait for a rerun")
     return jobs
 
 
@@ -150,7 +169,7 @@ def run_live(client, jobs, tag, mode, schema, workers):
     print(f"live: done, {errors} errors")
 
 
-def submit(client, jobs, tag):
+def submit(client, jobs, tag, shelves_file):
     by_alias = {}
     for alias, shelf, sample in jobs:
         by_alias.setdefault(alias, []).append((shelf, sample))
@@ -166,11 +185,12 @@ def submit(client, jobs, tag):
             ))
         batch = client.messages.batches.create(requests=requests)
         append_jsonl(BATCHES, {"batch_id": batch.id, "alias": alias, "tag": tag, "requests": mapping,
+                               "shelves_file": str(shelves_file),
                                "collected": False, "ts": datetime.now(timezone.utc).isoformat()})
         print(f"submitted {alias}: {len(requests)} requests, batch {batch.id}")
 
 
-def collect(client, shelves_by_id, poll_seconds):
+def collect(client, poll_seconds):
     batches = read_jsonl(BATCHES)
     collected = {b["batch_id"] for b in batches if b.get("collected")}
     open_batches = [b for b in batches if not b.get("collected") and b["batch_id"] not in collected]
@@ -182,6 +202,7 @@ def collect(client, shelves_by_id, poll_seconds):
             c = status.request_counts
             print(f"  {b['alias']} {b['batch_id']}: processing {c.processing}, done {c.succeeded}, errored {c.errored}")
             time.sleep(poll_seconds)
+        shelves_by_id = {s["shelf_id"]: s for s in load_shelves(Path(b.get("shelves_file", SHELVES_FILE)))}
         done = {r["key"] for r in read_jsonl(out_path(b["alias"]))}
         counts = {"succeeded": 0, "errored": 0, "canceled": 0, "expired": 0}
         for res in client.messages.batches.results(b["batch_id"]):
@@ -211,10 +232,11 @@ def main() -> None:
 
     load_env()
     client = anthropic.Anthropic()
-    all_shelves = load_shelves()
+    shelves_file = Path(args.shelves_file) if args.shelves_file else SHELVES_FILE
+    all_shelves = load_shelves(shelves_file)
 
     if args.command == "collect":
-        collect(client, {s["shelf_id"]: s for s in all_shelves}, args.poll_seconds)
+        collect(client, args.poll_seconds)
         return
 
     shelves = select(all_shelves, args.categories, args.replicates, args.variants, args.limit,
@@ -225,7 +247,7 @@ def main() -> None:
     if not jobs:
         return
     if args.command == "submit":
-        submit(client, jobs, args.tag)
+        submit(client, jobs, args.tag, shelves_file)
     else:
         schema = REASON_SCHEMA if mode == "reasons" else CHOICE_SCHEMA
         run_live(client, jobs, args.tag, mode, schema, args.workers)

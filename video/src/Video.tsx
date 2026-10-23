@@ -1,29 +1,33 @@
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useVideoConfig } from "remotion";
 import { ASSETS } from "./assets";
+import { Footer, Glow, Progress } from "./chrome";
 import { Cta } from "./scenes/Cta";
 import { Hijack } from "./scenes/Hijack";
 import { Hook } from "./scenes/Hook";
+import { Router } from "./scenes/Router";
+import { Setup } from "./scenes/Setup";
+import { ShieldIntro } from "./scenes/ShieldIntro";
+import { ShieldResult } from "./scenes/ShieldResult";
 import { Tricks } from "./scenes/Tricks";
 import { Wins } from "./scenes/Wins";
-import { Models } from "./scenes/Models";
-import { Setup } from "./scenes/Setup";
-import { Footer, Glow, Progress } from "./chrome";
 import { BG } from "./theme";
 
-// 40 s at 30 fps, matching the 39-second edit of the music track.
+// 68 s at 30 fps, matching the 68-second edit of the music track. Scenes hold 6 to 10 s.
 const SCENES = [
-  { id: "hook", from: 0, duration: 105 },
-  { id: "setup", from: 105, duration: 120 },
-  { id: "tricks", from: 225, duration: 240 },
-  { id: "hijack", from: 465, duration: 225 },
-  { id: "wins", from: 690, duration: 195 },
-  { id: "models", from: 885, duration: 165 },
-  { id: "cta", from: 1050, duration: 150 },
+  { id: "hook", from: 0, duration: 165 },
+  { id: "setup", from: 165, duration: 180 },
+  { id: "tricks", from: 345, duration: 300 },
+  { id: "backfire", from: 645, duration: 225 },
+  { id: "wins", from: 870, duration: 210 },
+  { id: "shieldIntro", from: 1080, duration: 300 },
+  { id: "shieldResult", from: 1380, duration: 240 },
+  { id: "router", from: 1620, duration: 240 },
+  { id: "cta", from: 1860, duration: 180 },
 ] as const;
-export const TOTAL_FRAMES = 1200;
+export const TOTAL_FRAMES = 2040;
 
 // Frames (absolute) where a pop accents a number landing.
-const POPS = [465 + 95, 690 + 18, 690 + 53];
+const POPS = [645 + 110, 870 + 18, 870 + 53, 1380 + 80, 1620 + 70];
 
 const Sfx: React.FC<{ file: string | null; at: number; volume: number }> = ({ file, at, volume }) =>
   file ? (
@@ -32,32 +36,45 @@ const Sfx: React.FC<{ file: string | null; at: number; volume: number }> = ({ fi
     </Sequence>
   ) : null;
 
+const SCENE_COMPONENTS: Record<string, React.FC<{ duration: number }>> = {
+  hook: Hook,
+  setup: Setup,
+  tricks: Tricks,
+  backfire: Hijack,
+  wins: Wins,
+  shieldIntro: ShieldIntro,
+  shieldResult: ShieldResult,
+  router: Router,
+  cta: () => <Cta />,
+};
+
 export const AIShopper: React.FC = () => {
   const { durationInFrames } = useVideoConfig();
-  const [hook, setup, tricks, hijack, wins, models, cta] = SCENES;
+  const cta = SCENES[SCENES.length - 1];
   return (
     <AbsoluteFill style={{ backgroundColor: BG }}>
       <Glow />
       {ASSETS.music && (
         <Audio
           src={staticFile(`envato/${ASSETS.music}`)}
-          volume={(f) => interpolate(f, [0, 15, durationInFrames - 30, durationInFrames], [0, 0.65, 0.65, 0], { extrapolateRight: "clamp" })}
+          volume={(f) => interpolate(f, [0, 15, durationInFrames - 45, durationInFrames], [0, 0.65, 0.65, 0], { extrapolateRight: "clamp" })}
         />
       )}
       {SCENES.slice(1).map((sc) => (
-        <Sfx key={sc.id} file={ASSETS.whoosh} at={sc.from - 8} volume={0.35} />
+        <Sfx key={sc.id} file={ASSETS.whoosh} at={sc.from - 10} volume={0.3} />
       ))}
       {POPS.map((f) => (
-        <Sfx key={f} file={ASSETS.pop} at={f} volume={0.6} />
+        <Sfx key={f} file={ASSETS.pop} at={f} volume={0.55} />
       ))}
-      <Sequence from={hook.from} durationInFrames={hook.duration}><Hook duration={hook.duration} /></Sequence>
-      <Sequence from={setup.from} durationInFrames={setup.duration}><Setup duration={setup.duration} /></Sequence>
-      <Sequence from={tricks.from} durationInFrames={tricks.duration}><Tricks duration={tricks.duration} /></Sequence>
-      <Sequence from={hijack.from} durationInFrames={hijack.duration}><Hijack duration={hijack.duration} /></Sequence>
-      <Sequence from={wins.from} durationInFrames={wins.duration}><Wins duration={wins.duration} /></Sequence>
-      <Sequence from={models.from} durationInFrames={models.duration}><Models duration={models.duration} /></Sequence>
-      <Sequence from={cta.from} durationInFrames={cta.duration}><Cta /></Sequence>
-      <Footer hideBefore={setup.from} hideAfter={cta.from} />
+      {SCENES.map((sc) => {
+        const C = SCENE_COMPONENTS[sc.id];
+        return (
+          <Sequence key={sc.id} from={sc.from} durationInFrames={sc.duration}>
+            <C duration={sc.duration} />
+          </Sequence>
+        );
+      })}
+      <Footer hideBefore={SCENES[1].from} hideAfter={cta.from} />
       <Progress />
     </AbsoluteFill>
   );

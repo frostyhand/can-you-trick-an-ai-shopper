@@ -18,7 +18,10 @@ import httpx2 as httpx
 from study.cli import add_filters
 from study.config import AGENT_INSTRUCTIONS, OPENROUTER_EFFORT, OPENROUTER_MODELS, RAW
 from study.render import claude_user_message, content_hash, product_ids, request_key
-from study.store import append_jsonl, load_env, load_shelves, read_jsonl, select
+from pathlib import Path
+
+from study.config import SHELVES_FILE
+from study.store import append_jsonl, load_env, load_shelves, read_jsonl, reuse_index, reused, select
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 SCHEMA = {
@@ -88,15 +91,31 @@ def main() -> None:
     args = parser.parse_args()
 
     load_env()
-    shelves = select(load_shelves(), args.categories, args.replicates, args.variants, args.limit,
+    shelves_file = Path(args.shelves_file) if args.shelves_file else SHELVES_FILE
+    shelves = select(load_shelves(shelves_file), args.categories, args.replicates, args.variants, args.limit,
                     args.conditions)
-    jobs = []
+    jobs, copied, deferred, queued = [], 0, 0, set()
     for alias in args.models:
-        done = {r["key"] for r in read_jsonl(out_path(alias))}
+        existing = read_jsonl(out_path(alias))
+        done = {r["key"] for r in existing}
+        idx = reuse_index(existing)
         for shelf in shelves:
             for sample in range(args.samples):
-                if request_key(alias, shelf, sample, args.tag) not in done:
+                key = request_key(alias, shelf, sample, args.tag)
+                if key in done:
+                    continue
+                prior = idx.get((content_hash(shelf), sample, "choice"))
+                if prior is not None:
+                    append_jsonl(out_path(alias), reused(prior, key, args.tag, shelf["shelf_id"]))
+                    done.add(key)
+                    copied += 1
+                elif (alias, content_hash(shelf), sample) not in queued:
+                    queued.add((alias, content_hash(shelf), sample))
                     jobs.append((alias, shelf, sample))
+                else:
+                    deferred += 1  # same input already queued: copied on the next run
+    if copied or deferred:
+        print(f"reused {copied} earlier answers to identical shelves; {deferred} duplicates wait for a rerun")
     print(f"openrouter: {len(shelves)} shelves x {args.samples} samples x {len(args.models)} models, {len(jobs)} pending")
 
     headers = {"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"}

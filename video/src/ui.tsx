@@ -20,7 +20,7 @@ export const Rise: React.FC<{ delay?: number; children: React.ReactNode; style?:
 };
 
 /** Fade the whole scene out over its last frames. */
-export const useOutro = (duration: number, length = 12) => {
+export const useOutro = (duration: number, length = 20) => {
   const frame = useCurrentFrame();
   return interpolate(frame, [duration - length, duration], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 };

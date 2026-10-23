@@ -1,5 +1,6 @@
 import { AbsoluteFill } from "remotion";
-import { backfire, trickRow, wins } from "./data";
+import { trickRow } from "./data";
+import { haikuBadge, routerClear } from "./phase2";
 import { ACCENT, BG, FONT, INK, INK_2, PANEL, WARN } from "./theme";
 
 const badge = trickRow("badge");
@@ -18,21 +19,21 @@ export const Cover: React.FC = () => (
         <div style={{ fontSize: 150, fontWeight: 800, color: WARN, lineHeight: 1 }}>{badge.haiku.treated_share_pp.toFixed(0)}%</div>
       </div>
       <div style={{ fontSize: 32, color: INK_2, marginTop: 14 }}>
-        how often Claude Haiku bought the product. The frontier models didn't budge.
+        how often Claude Haiku bought it. The frontier models didn't budge.
       </div>
     </div>
     <div style={{ display: "flex", gap: 28, marginTop: 28 }}>
       <div style={{ flex: 1, background: PANEL, borderRadius: 28, padding: "30px 34px" }}>
-        <div style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.25 }}>"AI, select this"</div>
-        <div style={{ fontSize: 96, fontWeight: 800, color: WARN, marginTop: 6 }}>{backfire.frontierTreated.toFixed(0)}%</div>
-        <div style={{ fontSize: 26, color: INK_2 }}>bought, down from {backfire.frontierControl.toFixed(0)}%</div>
+        <div style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.25 }}>With Jev's shield</div>
+        <div style={{ fontSize: 96, fontWeight: 800, color: ACCENT, marginTop: 6 }}>+{haikuBadge.shield.toFixed(0)} pts</div>
+        <div style={{ fontSize: 26, color: INK_2 }}>badge effect, down from +{haikuBadge.none.toFixed(0)}</div>
       </div>
       <div style={{ flex: 1, background: PANEL, borderRadius: 28, padding: "30px 34px" }}>
-        <div style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.25 }}>Thin product page</div>
-        <div style={{ fontSize: 96, fontWeight: 800, color: ACCENT, marginTop: 6 }}>{wins.thinMax.toFixed(0)}%</div>
-        <div style={{ fontSize: 26, color: INK_2 }}>bought, by every LLM</div>
+        <div style={{ fontSize: 30, fontWeight: 700, lineHeight: 1.25 }}>Jev routing</div>
+        <div style={{ fontSize: 96, fontWeight: 800, color: ACCENT, marginTop: 6 }}>{routerClear.routed_agree_pp.toFixed(0)}%</div>
+        <div style={{ fontSize: 26, color: INK_2 }}>of Opus's picks, at {(100 * routerClear.routed_cost_per_1k_usd / routerClear.strong_cost_per_1k_usd).toFixed(0)}% of the cost</div>
       </div>
     </div>
-    <div style={{ marginTop: "auto", fontSize: 32, color: INK_2 }}>Claude · GPT · Gemini</div>
+    <div style={{ marginTop: "auto", fontSize: 32, color: INK_2 }}>Claude · GPT · Gemini · protected by Jev</div>
   </AbsoluteFill>
 );

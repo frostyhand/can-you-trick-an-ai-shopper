@@ -48,3 +48,16 @@ def load_env() -> None:
     from study.config import ROOT
 
     load_dotenv(ROOT / ".env", override=False)
+
+
+def reuse_index(records: list[dict]) -> dict:
+    """(content_hash, sample, mode) -> an earlier record with exactly that input, from any run."""
+    idx = {}
+    for r in records:
+        if r.get("content_hash") and r.get("valid", True):
+            idx.setdefault((r["content_hash"], r.get("sample", 0), r.get("mode", "choice")), r)
+    return idx
+
+
+def reused(record: dict, key: str, tag: str, shelf_id: str) -> dict:
+    return {**record, "key": key, "tag": tag, "shelf_id": shelf_id, "reused_from": record["key"]}

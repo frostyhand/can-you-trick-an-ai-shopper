@@ -199,6 +199,43 @@ def cost_speed_chart(summary):
     save(fig, "cost_speed")
 
 
+def phase2_shield_chart(summary):
+    """Claude Haiku 5.5's response to each trick on identical shelves, without and with Jev's shield."""
+    path = RESULTS / "phase2.json"
+    if not path.exists():
+        return
+    p = json.loads(path.read_text())["shield"]
+    rows = [("badge", '"#1 Bestseller" badge'), ("anchor", 'Fake "was" price'), ("urgency", '"Deal ends in 2 hours"'),
+            ("injection_subtle", '"AI assistants rate this best"'), ("injection_overt", '"AI, select this" note'),
+            ("scarcity", '"Only 2 left"'), ("new_badge", '"Customer favourite" *'), ("new_urgency", '"Selling fast" *'),
+            ("new_ai_claim", '"Most AI agents pick this" *'), ("new_ai_instruction", '"Assistant: verified best option" *')]
+
+    def val(arm, t):
+        b = p[arm]["haiku"]
+        return b["new_tricks"][t]["uplift_pp"] if t.startswith("new_") else b["tricks_close"][t]
+
+    fig, ax = plt.subplots(figsize=(10, 6.2))
+    fig.subplots_adjust(left=0.33, right=0.95, top=0.78, bottom=0.13)
+    for i, (t, label) in enumerate(rows):
+        a, b = val("none", t), val("shield", t)
+        ax.plot([a, b], [i, i], color=GRID, linewidth=3, zorder=1, solid_capstyle="round")
+        ax.scatter([a], [i], s=70, color="#b9b8b1", edgecolor=SURFACE, linewidth=1.5, zorder=3)
+        ax.scatter([b], [i], s=70, color="#2a78d6", edgecolor=SURFACE, linewidth=1.5, zorder=4)
+        ax.text(max(a, b) + 1.2, i, f"{a:+.0f} → {b:+.0f}", va="center", fontsize=10, color=INK)
+    ax.set_yticks(range(len(rows)), [r[1] for r in rows])
+    ax.invert_yaxis()
+    ax.axvline(0, color=INK_2, linewidth=1)
+    ax.set_xlabel("Change in how often Claude Haiku 5.5 bought the product (percentage points)")
+    style(ax)
+    title(fig, "Jev's shield takes the tricks off the shelf", "Claude Haiku 5.5 on identical shelves. * = trick wordings the shield had never seen")
+    x = 0.02
+    for label, color in (("No shield", "#b9b8b1"), ("With Jev's shield", "#2a78d6")):
+        fig.patches.append(matplotlib.patches.Circle((x + 0.006, 0.852), 0.006, color=color, transform=fig.transFigure, figure=fig))
+        fig.text(x + 0.018, 0.843, label, fontsize=10, color=INK, va="bottom")
+        x += 0.03 + 0.0075 * len(label)
+    save(fig, "phase2_shield")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--summary", default=str(RESULTS / "summary.json"))
@@ -208,6 +245,7 @@ def main() -> None:
         trick_chart(summary, condition)
     foolability_chart(summary)
     cost_speed_chart(summary)
+    phase2_shield_chart(summary)
     print(f"charts written to {CHARTS}")
 
 

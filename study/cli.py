@@ -10,3 +10,4 @@ def add_filters(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--variants", type=lambda s: s.split(","), default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--conditions", type=lambda s: s.split(","), default=None, help="clear and/or close")
+    parser.add_argument("--shelves-file", default=None, help="shelves to run (default data/shelves.jsonl)")

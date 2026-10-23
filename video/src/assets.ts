@@ -7,7 +7,7 @@ export const ASSETS: {
   whoosh: string | null;
   pop: string | null;
 } = {
-  music: "music.wav", // "Tech" by AlexRockBeat, 39 s edit
+  music: "music68.wav", // "Tech" by AlexRockBeat, 68 s edit
   hookClip: "robot.mp4", // "Futuristic Robot Pushing Shopping Cart 3D Animation" by julost
   ctaClip: "cart.mp4", // "Futuristic Digital Shopping Cart Icon Animation" by Infi_Studio
   whoosh: "whoosh.wav", // "Warm Whoosh Tech Transition" by Ghetty

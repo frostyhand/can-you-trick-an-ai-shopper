@@ -39,3 +39,7 @@ Snippets are the availability line, badge, deal line, ad label, the "was" price 
 ## Reporting
 
 Every hypothesis is reported whether or not it holds. Jev's own product picks are not collected or reported.
+
+## Deviations
+
+Recorded after the run; see [REPORT.md](REPORT.md#deviations-from-the-preregistration). Opus requests were sent live instead of through the stalled batch queue, the held-out classifications were re-run after a log was accidentally deleted (identical results), and three analyses were added after seeing the data and are labelled exploratory: the 90% confidence shield, the router by condition, and foolability without the .99 price.

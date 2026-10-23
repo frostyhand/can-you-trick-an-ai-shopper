@@ -29,7 +29,7 @@ export const Tricks: React.FC<{ duration: number }> = ({ duration }) => {
     <Page padding={70}>
       <div style={{ opacity: out }}>
         <Rise>
-          <div style={{ fontSize: 60, fontWeight: 800, lineHeight: 1.1 }}>Store tricks fooled 1 of 5 AIs.</div>
+          <div style={{ fontSize: 60, fontWeight: 800, lineHeight: 1.1 }}>Store tricks fooled the small model.</div>
         </Rise>
         <Rise delay={6}>
           <div style={{ fontSize: 32, color: INK_2, marginTop: 14 }}>How often each AI bought the product, before → after the trick (identical shelves)</div>
@@ -44,12 +44,12 @@ export const Tricks: React.FC<{ duration: number }> = ({ duration }) => {
           ))}
         </div>
         {ROWS.map((r, i) => {
-          const show = interpolate(frame, [24 + i * 22, 36 + i * 22], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          const show = interpolate(frame, [30 + i * 40, 46 + i * 40], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
           return (
             <div key={r.trick} style={{ opacity: show, display: "flex", alignItems: "center", background: i % 2 ? "transparent" : PANEL, borderRadius: 22, padding: "18px 0", marginTop: 18 }}>
               <div style={{ width: 420, paddingLeft: 26, fontSize: 32, fontWeight: 700, boxSizing: "border-box" }}>{r.label}</div>
               {COLS.map((c) => (
-                <Cell key={c.key} before={r[c.key].control_share_pp} after={r[c.key].treated_share_pp} delay={30 + i * 22} />
+                <Cell key={c.key} before={r[c.key].control_share_pp} after={r[c.key].treated_share_pp} delay={38 + i * 40} />
               ))}
             </div>
           );
